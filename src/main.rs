@@ -1,3 +1,4 @@
+
 #![no_std]
 // we don't want to use the normal entry point chain
 // normally for rust linked with std lib
@@ -29,8 +30,25 @@ fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
+
+static HELLO: &[u8] = b"Hello World!";
+
 // overwriting the crt0 entry point
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    // raw pointer to the VGA buffer address
+    let vga_buffer = 0xb8000 as *mut u8;
+
+    HELLO.iter().enumerate().for_each(|(i, &byte)| {
+        // This is not how it should be handled in Rust
+        // as we could write before or after the VGA buffer
+        unsafe {
+            // ASCII byte
+            *vga_buffer.offset(i as isize * 2) = byte;
+            // color (background and font) byte
+            *vga_buffer.offset(i as isize * 2 + 1) = 0x0c;
+        }
+    });
+
     loop {}
 }
