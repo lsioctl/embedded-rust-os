@@ -1,4 +1,3 @@
-
 #![no_std]
 // we don't want to use the normal entry point chain
 // normally for rust linked with std lib
@@ -17,7 +16,11 @@
 // like: thumbv7em-none-eabihf
 #![no_main]
 
+mod vga_buffer;
+
 use core::panic::PanicInfo;
+
+use vga_buffer::print_something;
 
 /// This function is called on panic.
 /// with no_std we have to implement our own
@@ -37,18 +40,19 @@ static HELLO: &[u8] = b"Hello World!";
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     // raw pointer to the VGA buffer address
-    let vga_buffer = 0xb8000 as *mut u8;
+    // let vga_buffer = 0xb8000 as *mut u8;
 
-    HELLO.iter().enumerate().for_each(|(i, &byte)| {
-        // This is not how it should be handled in Rust
-        // as we could write before or after the VGA buffer
-        unsafe {
-            // ASCII byte
-            *vga_buffer.offset(i as isize * 2) = byte;
-            // color (background and font) byte
-            *vga_buffer.offset(i as isize * 2 + 1) = 0x0c;
-        }
-    });
+    // HELLO.iter().enumerate().for_each(|(i, &byte)| {
+    //     // This is not how it should be handled in Rust
+    //     // as we could write before or after the VGA buffer
+    //     unsafe {
+    //         // ASCII byte
+    //         *vga_buffer.offset(i as isize * 2) = byte;
+    //         // color (background and font) byte
+    //         *vga_buffer.offset(i as isize * 2 + 1) = 0x0c;
+    //     }
+    // });
 
+    print_something();
     loop {}
 }
