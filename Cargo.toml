@@ -11,8 +11,6 @@ edition = "2021"
 # resolve the issue of language item required, but not found: `eh_personality`
 # and reduces the binary size
 panic = "abort"
-
-[profile.release]
 # This disable stack unwinding by aborting instead
 # resolve the issue of language item required, but not found: `eh_personality`
 # and reduces the binary size

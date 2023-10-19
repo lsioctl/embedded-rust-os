@@ -76,9 +76,22 @@ impl Writer {
 
                 let color_code = self.color_code;
 
-                self.buffer.chars[row][col] = ScreenChar {
+                // note sur this is done the right way
+                // but the blog recommended to use volatile <= 2.6
+                // and for me it is no go to use such an outdated crate
+                let dst = &mut self.buffer.chars[row][col];
+                let src = ScreenChar {
                     ascii_character: byte,
                     color_code
+                };
+                // for me it is the minimum unsafe portion possible with write_volatie
+                // * dst is still bound checked (outside of unsafe)
+                // * src is outside of unsafe (not sure what it brings as a safety)
+                unsafe {
+                    core::ptr::write_volatile(
+                        dst,
+                        src
+                    );
                 };
 
                 self.column_position += 1;
