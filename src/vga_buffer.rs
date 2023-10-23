@@ -1,3 +1,5 @@
+use core::fmt::{self, Write};
+
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 // u4 would have been sufficient, but doesn't exist
@@ -89,6 +91,7 @@ impl Writer {
                 // * src is outside of unsafe (not sure what it brings as a safety)
                 unsafe {
                     core::ptr::write_volatile(
+                        // &mut T automatically converts to *mut T
                         dst,
                         src
                     );
@@ -126,6 +129,13 @@ impl Writer {
     }
 }
 
+impl fmt::Write for Writer {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.write_string(s);
+        Ok(())
+    }
+}
+
 pub fn print_something() {
     let mut writer = Writer {
         row_position: 0,
@@ -142,4 +152,7 @@ pub fn print_something() {
     writer.write_string("Hello World !");
     writer.write_string("Hello World aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!");
     writer.write_string("Hello World éééééóóóóó!");
+
+    // write fo framebuffer never fails, so unwrap is ok here
+    write!(writer, "{} is the response to {}", 42, "anything").unwrap();
 }
