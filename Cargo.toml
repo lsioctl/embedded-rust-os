@@ -18,3 +18,8 @@ panic = "abort"
 
 [dependencies]
 bootloader = "0.9.23"
+# we have no_std so lazy_static can't for example work in the heap
+# it uses spin's crate once instead
+lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
+# this should come with lazy_static, I have to dig more crate dependencies
+spin = "0.9.8"
