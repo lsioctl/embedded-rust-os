@@ -20,8 +20,6 @@ mod vga_buffer;
 
 use core::panic::PanicInfo;
 
-use core::fmt::Write;
-
 /// This function is called on panic.
 /// with no_std we have to implement our own
 #[panic_handler]
@@ -36,6 +34,6 @@ fn panic(_info: &PanicInfo) -> ! {
 // overwriting the crt0 entry point
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    write!(vga_buffer::WRITER.lock(), "{} is the response to {}", 42, "anything").unwrap();
+    println!("{} is the response to {}", 42, "anything");
     loop {}
 }

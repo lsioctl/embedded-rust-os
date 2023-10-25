@@ -138,7 +138,15 @@ impl fmt::Write for Writer {
     }
 }
 
+// we use lazy_static to have a safe mutable global variable
+// we can't have it with const fn because we create a mutable
+// reference from a row pointer, and that can't be done
+// at compile time. Note that the lazy_static we use do
+// not work with the heap (we have no heap for now)
+// so it uses spin crate's Once
 lazy_static! {
+    // we use Mutex from spin crate (spinlock)
+    // has we don't use std, and have no thread
     pub static ref WRITER: Mutex<Writer> = Mutex::new(
         Writer {
             row_position: 0,
@@ -148,3 +156,24 @@ lazy_static! {
         }
     );
 }
+
+
+// macros inspired from std println! macro
+// implementation so hidden from the doc
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+    use core::fmt::Write;
+    WRITER.lock().write_fmt(args).unwrap();
+}
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
+
