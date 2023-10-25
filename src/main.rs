@@ -16,9 +16,12 @@
 // like: thumbv7em-none-eabihf
 #![no_main]
 
-mod vga_buffer;
-
 use core::panic::PanicInfo;
+
+// import from our lib crate
+use embedded_rust_os::println;
+
+//use crate::println;
 
 /// This function is called on panic.
 /// with no_std we have to implement our own
@@ -35,5 +38,22 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("{} is the response to {}", 42, "anything");
+
+    embedded_rust_os::init();
+
+    // send the int3 (breakpoint, #BP) exception
+    x86_64::instructions::interrupts::int3();
+
+    // once interrupt is handled, execution continue
+
+    println!("Still alive");
+
+    // send the int3 (breakpoint, #BP) exception
+    x86_64::instructions::interrupts::int3();
+
+    // once interrupt is handled, execution continue
+
+    println!("Still still alive");
+
     loop {}
 }

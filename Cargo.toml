@@ -23,3 +23,4 @@ bootloader = "0.9.23"
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 # this should come with lazy_static, I have to dig more crate dependencies
 spin = "0.9.8"
+x86_64 = "0.14.11"
