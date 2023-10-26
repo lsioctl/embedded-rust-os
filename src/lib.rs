@@ -3,7 +3,9 @@
 
 pub mod vga_buffer;
 mod interrupts;
+mod gdt;
 
 pub fn init() {
     interrupts::init_idt();
+    gdt::init();
 }

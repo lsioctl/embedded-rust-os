@@ -30,8 +30,14 @@ use embedded_rust_os::println;
 // with the return type ! (never)
 // PanicInfo containes the file and the line where the
 // panic happened, and optional message
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
+    println!("{}", info);
     loop {}
+}
+
+#[allow(unconditional_recursion)]
+fn stack_overflow() {
+    stack_overflow();
 }
 
 // overwriting the crt0 entry point
@@ -48,12 +54,11 @@ pub extern "C" fn _start() -> ! {
 
     println!("Still alive");
 
-    // send the int3 (breakpoint, #BP) exception
-    x86_64::instructions::interrupts::int3();
+    // trigger a page fault
+    // unsafe {
+    //     *(0xdeadbeef as *mut u8) = 42;
+    // };
 
-    // once interrupt is handled, execution continue
-
-    println!("Still still alive");
-
+    stack_overflow();
     loop {}
 }
