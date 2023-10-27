@@ -19,7 +19,7 @@
 use core::panic::PanicInfo;
 
 // import from our lib crate
-use embedded_rust_os::println;
+use embedded_rust_os::{println, print};
 
 //use crate::println;
 
@@ -35,10 +35,10 @@ fn panic(info: &PanicInfo) -> ! {
     loop {}
 }
 
-#[allow(unconditional_recursion)]
-fn stack_overflow() {
-    stack_overflow();
-}
+// #[allow(unconditional_recursion)]
+// fn stack_overflow() {
+//     stack_overflow();
+// }
 
 // overwriting the crt0 entry point
 #[no_mangle]
@@ -48,17 +48,19 @@ pub extern "C" fn _start() -> ! {
     embedded_rust_os::init();
 
     // send the int3 (breakpoint, #BP) exception
-    x86_64::instructions::interrupts::int3();
+    //x86_64::instructions::interrupts::int3();
 
     // once interrupt is handled, execution continue
 
-    println!("Still alive");
+    //println!("Still alive");
 
     // trigger a page fault
     // unsafe {
     //     *(0xdeadbeef as *mut u8) = 42;
     // };
 
-    stack_overflow();
-    loop {}
+    //stack_overflow();
+    loop {
+        print!("_");
+    }
 }

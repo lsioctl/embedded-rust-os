@@ -21,6 +21,7 @@ bootloader = "0.9.23"
 # we have no_std so lazy_static can't for example work in the heap
 # it uses spin's crate once instead
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
+pic8259 = "0.10.4"
 # this should come with lazy_static, I have to dig more crate dependencies
 spin = "0.9.8"
 x86_64 = "0.14.11"
