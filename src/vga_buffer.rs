@@ -106,12 +106,38 @@ impl Writer {
 
     pub fn new_line(&mut self) {
         // TODO: real scrolling so shift the matrix rows
-        if self.row_position >= BUFFER_HEIGHT {
+        if self.row_position >= BUFFER_HEIGHT - 1 {
+            (1..BUFFER_HEIGHT).for_each(|row| {
+                (0..BUFFER_WIDTH).for_each(|col| {
+                    // I can't do something like this:
+                    // let src = & self.buffer.chars[row][col];
+                    // let dst = &mut self.buffer.chars[row - 1][col];
+                    // unsafe {
+                    //    let character = core::ptr::read_volatile(src);
+                    //    core::ptr::write_volatile(dst, character);
+                    // }
+                    // cannot borrow `**self.buffer.chars[_][_]` as mutable because it is also borrowed as immutable
+                    let src = & self.buffer.chars[row][col];
+                    let character = unsafe { 
+                        core::ptr::read_volatile(src)
+                    };
+
+                    let dst = &mut self.buffer.chars[row - 1][col];
+                    unsafe {
+                        core::ptr::write_volatile(dst, character);
+                    }
+                })
+            });
             self.row_position = BUFFER_HEIGHT - 1;
+            self.column_position = 0;
+            self.write_byte(b'z');
         } else {
             self.row_position += 1;
+            self.column_position = 0;
+            self.write_byte(b'u');
         }
-        self.column_position = 0;
+
+        
     }
 
     pub fn write_string(&mut self, s: &str) {
