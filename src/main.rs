@@ -61,7 +61,6 @@ pub extern "C" fn _start() -> ! {
 
     //stack_overflow();
     loop {
-        print!("_");
-        for _ in 0..1000 {}
+        //print!("_");
     }
 }
