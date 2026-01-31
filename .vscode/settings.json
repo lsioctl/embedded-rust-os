@@ -1,0 +1,8 @@
+// to avoid rust-analywer complaining about tests with no std
+{
+    "rust-analyzer.check.allTargets": false,
+    "rust-analyzer.check.extraArgs": [
+        "--target",
+        "embedded-rust-os.json"
+    ]
+}
